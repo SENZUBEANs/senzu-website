@@ -4,55 +4,71 @@ document.getElementById('powerUpBtn').addEventListener('click', function() {
     
     setTimeout(() => {
         document.querySelector('.center-container').classList.add('fade-out');
-    }, 2000); // Show the message for 2 seconds before fade
+    }, 2000);
 
     setTimeout(() => {
         startSenzuBeanGame();
-    }, 3000); // Start the game after 3 seconds
+    }, 3000);
 });
 
 function startSenzuBeanGame() {
-    // Replace the current container content with the game container
     document.body.innerHTML = '<div class="game-container"></div>';
-
     const gameContainer = document.querySelector('.game-container');
 
-    // Set up mousemove event for senzu bean spawning
+    let cursorX = window.innerWidth / 2;
+    let cursorY = window.innerHeight / 2;
+
+    // Function to update cursor position and spawn beans
+    function updatePosition(x, y) {
+        cursorX = x;
+        cursorY = y;
+        spawnBean(cursorX, cursorY, gameContainer);
+    }
+
+    // Mouse event listener
     document.addEventListener('mousemove', (event) => {
-        const x = event.clientX;
-        const y = event.clientY;
-
-        // Create a new bean element
-        const bean = document.createElement('div');
-        bean.classList.add('bean');
-        
-        // Set the initial position of the bean
-        bean.style.left = `${x - 15}px`; // Center the bean horizontally
-        bean.style.top = `${y - 15}px`;  // Center the bean vertically
-        
-        // Add the bean to the game container
-        gameContainer.appendChild(bean);
-
-        // Set a random direction and distance for the bean movement
-        const randomAngle = Math.random() * 360; // Random angle in degrees
-        const randomDistance = Math.random() * 100 + 50; // Random distance from 50 to 150 px
-
-        // Calculate the final position based on the angle and distance
-        const deltaX = randomDistance * Math.cos(randomAngle * (Math.PI / 180));
-        const deltaY = randomDistance * Math.sin(randomAngle * (Math.PI / 180));
-
-        // Apply the movement as a transform
-        bean.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-
-        // Remove the bean after some time
-        setTimeout(() => {
-            bean.remove();
-        }, 1000); // Adjust this value to keep beans on screen longer
+        updatePosition(event.clientX, event.clientY);
     });
 
-    // Set up click event for CTA
+    // Touch event listeners for mobile
+    document.addEventListener('touchmove', (event) => {
+        const touch = event.touches[0];
+        updatePosition(touch.clientX, touch.clientY);
+    });
+
+    document.addEventListener('touchstart', (event) => {
+        const touch = event.touches[0];
+        updatePosition(touch.clientX, touch.clientY);
+    });
+
+    // Interval to spawn beans when stationary
+    setInterval(() => {
+        spawnBean(cursorX, cursorY, gameContainer);
+    }, 500);
+
     document.addEventListener('click', () => {
-        // Redirect to the desired URL
-        window.location.href = 'https://dexscreener.com/solana/enzkqdsk6h7kfsuvofawdpbazbuyeqmsqwmnzhugti56'; // Replace with your target URL
-    }, { once: true }); // { once: true } ensures the CTA only redirects on the first click
+        window.location.href = 'https://dexscreener.com/solana/enzkqdsk6h7kfsuvofawdpbazbuyeqmsqwmnzhugti56';
+    }, { once: true });
+}
+
+function spawnBean(x, y, container) {
+    const bean = document.createElement('div');
+    bean.classList.add('bean');
+
+    bean.style.left = `${x - 15}px`;
+    bean.style.top = `${y - 15}px`;
+
+    container.appendChild(bean);
+
+    const randomAngle = Math.random() * 360;
+    const randomDistance = Math.random() * 100 + 50;
+
+    const deltaX = randomDistance * Math.cos(randomAngle * (Math.PI / 180));
+    const deltaY = randomDistance * Math.sin(randomAngle * (Math.PI / 180));
+
+    bean.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+
+    setTimeout(() => {
+        bean.remove();
+    }, 1000);
 }
