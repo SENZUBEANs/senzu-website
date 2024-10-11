@@ -1,6 +1,10 @@
 document.getElementById('powerUpBtn').addEventListener('click', function() {
     const memeMessage = document.getElementById('memeMessage');
     memeMessage.classList.toggle('hidden');
+
+    // Play the aura sound
+    const auraSound = document.getElementById('auraSound');
+    auraSound.play();
     
     setTimeout(() => {
         document.querySelector('.center-container').classList.add('fade-out');
@@ -18,19 +22,16 @@ function startSenzuBeanGame() {
     let cursorX = window.innerWidth / 2;
     let cursorY = window.innerHeight / 2;
 
-    // Function to update cursor position and spawn beans
     function updatePosition(x, y) {
         cursorX = x;
         cursorY = y;
         spawnBean(cursorX, cursorY, gameContainer);
     }
 
-    // Mouse event listener
     document.addEventListener('mousemove', (event) => {
         updatePosition(event.clientX, event.clientY);
     });
 
-    // Touch event listeners for mobile
     document.addEventListener('touchmove', (event) => {
         const touch = event.touches[0];
         updatePosition(touch.clientX, touch.clientY);
@@ -41,7 +42,6 @@ function startSenzuBeanGame() {
         updatePosition(touch.clientX, touch.clientY);
     });
 
-    // Interval to spawn beans when stationary
     setInterval(() => {
         spawnBean(cursorX, cursorY, gameContainer);
     }, 500);
